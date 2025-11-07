@@ -13,41 +13,116 @@ let powerUpActive = false;
 let powerUpTimer = null;
 let enemyMoveInterval = null;
 let powerUpRegenInterval = null;
+let currentLevel = 1;
 
 let player = { x: 1, y: 1 };
 
 // Enemy spawn area is in the center (like Pac-Man's ghost house)
 const SPAWN_CENTER = { x: 7, y: 7 };
 
-let enemies = [
-    { x: 7, y: 7, dir: 'up', icon: '🦠' },      // Virus
-    { x: 6, y: 7, dir: 'left', icon: '💀' },     // Trojan
-    { x: 8, y: 7, dir: 'right', icon: '⚠️' },    // Warning/Adware
-    { x: 7, y: 6, dir: 'up', icon: '👾' },       // Malicious Bot
-    { x: 6, y: 6, dir: 'left', icon: '🕷️' },    // Spyware Spider
-    { x: 8, y: 6, dir: 'right', icon: '🐛' }     // Worm
+// Level configurations
+const LEVELS = [
+    {
+        grid: [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
+            [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
+            [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,1,1,1,1,1,1,2,1,1,1],
+            [1,2,2,2,2,2,2,3,2,2,2,2,2,2,1],
+            [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
+            [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
+            [1,2,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,2,1,1,2,1,1,1,1,1,2,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        enemies: [
+            { x: 7, y: 7, dir: 'up', icon: '🦠' },
+            { x: 6, y: 7, dir: 'left', icon: '💀' },
+            { x: 8, y: 7, dir: 'right', icon: '⚠️' },
+            { x: 7, y: 6, dir: 'up', icon: '👾' },
+            { x: 6, y: 6, dir: 'left', icon: '🕷️' },
+            { x: 8, y: 6, dir: 'right', icon: '🐛' }
+        ]
+    },
+    {
+        grid: [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,1,1,2,1,1,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,1,1,2,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,1,1,1,1,1,1,2,1,2,1],
+            [1,2,2,2,2,2,2,3,2,2,2,2,2,2,1],
+            [1,2,1,2,1,1,1,1,1,1,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,1,1,2,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,1,1,2,1,1,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        enemies: [
+            { x: 7, y: 7, dir: 'up', icon: '🦠' },
+            { x: 6, y: 7, dir: 'left', icon: '💀' },
+            { x: 8, y: 7, dir: 'right', icon: '⚠️' },
+            { x: 7, y: 6, dir: 'up', icon: '👾' },
+            { x: 6, y: 6, dir: 'left', icon: '🕷️' },
+            { x: 8, y: 6, dir: 'right', icon: '🐛' },
+            { x: 7, y: 8, dir: 'down', icon: '🧟' }  // Zombie malware
+        ]
+    },
+    {
+        grid: [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,2,2,1,2,2,2,2,2,1,2,2,2,1],
+            [1,2,1,2,1,2,1,1,1,2,1,2,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,1,1,2,1,1,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,1,1,2,1,1,1,2,1],
+            [1,2,2,2,2,2,2,3,2,2,2,2,2,2,1],
+            [1,2,1,1,1,2,1,1,1,2,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,2,1,1,1,2,1,1,1,2,1,1,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,2,1,2,1,1,1,2,1,2,1,2,1],
+            [1,2,2,2,1,2,2,2,2,2,1,2,2,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        enemies: [
+            { x: 7, y: 7, dir: 'up', icon: '🦠' },
+            { x: 6, y: 7, dir: 'left', icon: '💀' },
+            { x: 8, y: 7, dir: 'right', icon: '⚠️' },
+            { x: 7, y: 6, dir: 'up', icon: '👾' },
+            { x: 6, y: 6, dir: 'left', icon: '🕷️' },
+            { x: 8, y: 6, dir: 'right', icon: '🐛' },
+            { x: 7, y: 8, dir: 'down', icon: '🧟' },  // Zombie malware
+            { x: 8, y: 8, dir: 'left', icon: '👹' }   // Demon ransomware
+        ]
+    }
 ];
+
+let enemies = [];
 
 // Create a maze-like grid
-let grid = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,2,2,2,1,2,2,2,1,2,2,2,2,1],
-    [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
-    [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,1,1,2,1,1,1,1,1,1,1,2,1,1,1],
-    [1,2,2,2,2,2,2,3,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
-    [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
-    [1,2,2,2,2,1,2,2,2,1,2,2,2,2,1],
-    [1,2,1,1,2,1,1,1,1,1,2,1,1,2,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
+let grid = [];
+
+function loadLevel(levelNum) {
+    const level = LEVELS[levelNum - 1];
+    grid = level.grid.map(row => [...row]); // Deep copy
+    enemies = level.enemies.map(e => ({...e})); // Deep copy
+    player = { x: 1, y: 1 };
+}
 
 function initGame() {
+    loadLevel(currentLevel);
+    
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 30px)`;
     gameBoard.innerHTML = '';
@@ -325,7 +400,22 @@ function winGame() {
     gameRunning = false;
     gameStarted = false;
     if (enemyMoveInterval) clearInterval(enemyMoveInterval);
-    showMessage('🎉 ALL DATA SECURED! YOU WIN! 🎉', '#00ff00');
+    if (powerUpRegenInterval) clearInterval(powerUpRegenInterval);
+    
+    if (currentLevel < LEVELS.length) {
+        // More levels to go
+        showMessage(`🎉 LEVEL ${currentLevel} COMPLETE! 🎉`, '#00ff00');
+        setTimeout(() => {
+            currentLevel++;
+            initGame();
+            document.getElementById('message').textContent = '';
+            // Auto-start next level
+            startGame();
+        }, 2500);
+    } else {
+        // Won the entire game!
+        showMessage('🏆 ALL LEVELS COMPLETE! YOU WIN! �', '#00ff00');
+    }
 }
 
 function showMessage(text, color) {
@@ -338,6 +428,7 @@ function updateDisplay() {
     // Display score in binary (with decimal in parentheses for reference)
     const binaryScore = score.toString(2).padStart(8, '0');
     document.getElementById('score').textContent = `${binaryScore} (${score})`;
+    document.getElementById('level').textContent = currentLevel;
     document.getElementById('dataLeft').textContent = dataLeft;
     document.getElementById('lives').textContent = lives;
 }
@@ -345,6 +436,7 @@ function updateDisplay() {
 function restartGame() {
     score = 0;
     lives = 3;
+    currentLevel = 1;
     gameRunning = false;
     gameStarted = false;
     powerUpActive = false;
@@ -352,35 +444,6 @@ function restartGame() {
     if (enemyMoveInterval) clearInterval(enemyMoveInterval);
     if (powerUpRegenInterval) clearInterval(powerUpRegenInterval);
     removePowerMessage();
-    
-    player = { x: 1, y: 1 };
-    enemies = [
-        { x: 7, y: 7, dir: 'up', icon: '🦠' },      // Virus
-        { x: 6, y: 7, dir: 'left', icon: '💀' },     // Trojan
-        { x: 8, y: 7, dir: 'right', icon: '⚠️' },    // Warning/Adware
-        { x: 7, y: 6, dir: 'up', icon: '👾' },       // Malicious Bot
-        { x: 6, y: 6, dir: 'left', icon: '🕷️' },    // Spyware Spider
-        { x: 8, y: 6, dir: 'right', icon: '🐛' }     // Worm
-    ];
-
-    // Reset grid
-    grid = [
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,2,2,2,1,2,2,2,1,2,2,2,2,1],
-        [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
-        [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
-        [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
-        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-        [1,1,1,2,1,1,1,1,1,1,1,2,1,1,1],
-        [1,2,2,2,2,2,2,3,2,2,2,2,2,2,1],
-        [1,2,1,1,1,1,2,1,2,1,1,1,1,2,1],
-        [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
-        [1,2,1,1,2,1,2,1,2,1,2,1,1,2,1],
-        [1,2,2,2,2,1,2,2,2,1,2,2,2,2,1],
-        [1,2,1,1,2,1,1,1,1,1,2,1,1,2,1],
-        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ];
 
     document.getElementById('message').textContent = '';
     

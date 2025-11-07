@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber PacMan - Hack the System</title>
+    <link rel="stylesheet" href="styles/cyber-pacman.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔐 Hacker Cat vs Malware 🔐</h1>
+        <p class="subtitle">Collect all data while avoiding 6 types of malware!</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">SCORE</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">DATA LEFT</div>
+                <div class="stat-value" id="dataLeft">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">LIVES</div>
+                <div class="stat-value" id="lives">3</div>
+            </div>
+        </div>
+
+        <div id="gameBoard"></div>
+
+        <div id="message"></div>
+
+        <button id="startBtn" onclick="startGame()">START GAME</button>
+        <button id="restartBtn" class="hidden" onclick="restartGame()">RESTART GAME</button>
+
+        <div class="controls">
+            <p>🎮 <strong>CONTROLS:</strong> Arrow Keys or WASD</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">😼 = You (Hacker Cat)</div>
+            <div class="legend-item">🦠💀⚠️👾🕷️🐛 = Malware</div>
+            <div class="legend-item">● = Data to Collect</div>
+            <div class="legend-item">🔑 = Power-up</div>
+        </div>
+    </div>
+
+    <script src="js/cyber-pacman.js"></script>
+</body>
+</html>

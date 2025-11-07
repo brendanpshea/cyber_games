@@ -1,0 +1,194 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+    color: #00ff00;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+.tagline {
+    font-size: 1.2em;
+    color: #0f0;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.game-card {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00ff00;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.4);
+    border-color: #00ff00;
+}
+
+.game-card.coming-soon {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.game-card.coming-soon:hover {
+    transform: none;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.game-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.game-card h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    color: #00ff00;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.game-description {
+    color: #0f0;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 1em;
+}
+
+.game-concepts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.concept-tag {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    color: #0f0;
+}
+
+.play-button {
+    display: inline-block;
+    padding: 12px 30px;
+    font-size: 1.1em;
+    font-family: 'Courier New', monospace;
+    background: #00ff00;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.play-button:hover {
+    background: #00cc00;
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+}
+
+.play-button:active {
+    transform: scale(0.98);
+}
+
+.play-button:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.play-button:disabled:hover {
+    transform: none;
+    background: #333;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 255, 0, 0.05);
+    border-radius: 10px;
+    border: 1px solid #00ff00;
+    color: #0f0;
+}
+
+footer p {
+    font-size: 1em;
+}
+
+.author {
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: rgba(0, 255, 0, 0.8);
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .tagline {
+        font-size: 1em;
+    }
+
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .game-icon {
+        font-size: 3em;
+    }
+
+    .game-card h2 {
+        font-size: 1.5em;
+    }
+}
